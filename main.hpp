@@ -10,22 +10,79 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
 
 
 struct Vector2 {
     int x;
     int y;
 
-    Vector2(int i, int j) {
-        x = i;
-        y = j;
+    Vector2(int i, int j) : x(i), y(j) {}
+
+    Vector2() : x(0.0), y(0.0) {}
+
+    // Addition
+    Vector2 operator+(const Vector2& other) const {
+        return Vector2(x + other.x, y + other.y);
     }
 
-    Vector2() {
-        x = 0;
-        y = 0;
+    // Subtraction
+    Vector2 operator-(const Vector2& other) const {
+        return Vector2(x - other.x, y - other.y);
     }
+
+    // Multiplication (scalar * vector)
+    Vector2 operator*(int scalar) const {
+        return Vector2(x * scalar, y * scalar);
+    }
+
+    // Division (vector / scalar)
+    Vector2 operator/(int scalar) const {
+        if (scalar != 0.0) {
+            return Vector2(x / scalar, y / scalar);
+        } else {
+            // Handle division by zero; you may choose to return a default value or throw an exception.
+            // Here, we return a vector with x and y set to zero.
+            return Vector2(0.0, 0.0);
+        }
+    }
+
+    // In-place addition
+    Vector2& operator+=(const Vector2& other) {
+        x += other.x;
+        y += other.y;
+        return *this;
+    }
+
+    // In-place subtraction
+    Vector2& operator-=(const Vector2& other) {
+        x -= other.x;
+        y -= other.y;
+        return *this;
+    }
+
+    int magnitude() const {
+        return std::sqrt(x * x + y * y);
+    }
+
+    Vector2 normalize() const {
+        int mag = magnitude();
+        if (mag != 0.0) {
+            return Vector2(x / mag, y / mag);
+        } else {
+            // Handle division by zero; you may choose to return a default value or throw an exception.
+            // Here, we return a vector with x and y set to zero.
+            return Vector2(0.0, 0.0);
+        }
+    }
+
+    // Calculate the dot product between two vectors
+    int dot(const Vector2& other) const {
+        return x * other.x + y * other.y;
+    }
+
 };
+
 
 struct Double2 {
     double x;
@@ -78,6 +135,23 @@ struct Double2 {
     double magnitude() const {
         return std::sqrt(x * x + y * y);
     }
+
+    Double2 normalize() const {
+        double mag = magnitude();
+        if (mag != 0.0) {
+            return Double2(x / mag, y / mag);
+        } else {
+            // Handle division by zero; you may choose to return a default value or throw an exception.
+            // Here, we return a vector with x and y set to zero.
+            return Double2(0.0, 0.0);
+        }
+    }
+
+    // Calculate the dot product between two vectors
+    double dot(const Double2& other) const {
+        return x * other.x + y * other.y;
+    }
+
 };
 
 
@@ -85,7 +159,7 @@ struct Double2 {
 bool initializeSDL();
 void closeSDL();
 void drawCircle(int32_t centreX, int32_t centreY, int32_t radius);
-void handleCollisions(int index);
-double dotProduct(const Double2& a, const Double2& b);
-void renderText(const std::string& text, int x, int y);
-void handleRadiusSlider(SDL_Event& e);
+void updateFluid();
+double distanceBetweenPoints(Double2 circle1, Double2 circle2);
+int updateFluidSection(void * data);
+void handleCollisions();
